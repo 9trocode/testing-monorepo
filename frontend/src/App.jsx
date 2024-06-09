@@ -1,10 +1,24 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [backendText, setBackendText] = useState()
+
+  useEffect(() => {
+    console.log('about to fetch')
+    fetch("http://localhost:3000/").then(res => res.text()).then(data => {
+      setBackendText(data);
+    }).catch(err => {
+      setBackendText(`Couldn't connect to the backend -> ${err.message}`)
+    })
+    return () => {
+      console.log("unmounting");
+      setBackendText(null)
+    }
+  }, [])
 
   return (
     <>
@@ -26,7 +40,7 @@ function App() {
         </p>
       </div>
       <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
+        {backendText ?? null}
       </p>
     </>
   )
